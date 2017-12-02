@@ -1,0 +1,8 @@
+[package]
+name = "day02"
+version = "0.1.0"
+authors = ["Peter Goodspeed-Niklaus <peter.r.goodspeedniklaus@gmail.com>"]
+
+[dependencies]
+num-traits = "0.1.41"
+util = {path = "../util"}
