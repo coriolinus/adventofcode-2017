@@ -2,6 +2,9 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::str::FromStr;
 
+pub type Tokenized<T> = Vec<Vec<T>>;
+pub type ParsedTokens<T> = Result<Tokenized<T>, <T as FromStr>::Err>;
+
 pub fn read_file(filename: &str) -> String {
     let mut f = File::open(filename).expect("file not found");
     let mut contents = String::new();
@@ -11,7 +14,7 @@ pub fn read_file(filename: &str) -> String {
     contents
 }
 
-pub fn tokenize<'a>(input: &'a str) -> Vec<Vec<&'a str>> {
+pub fn tokenize<'a>(input: &'a str) -> Tokenized<&'a str> {
     input
         .lines()
         .map(|line| {
@@ -23,9 +26,7 @@ pub fn tokenize<'a>(input: &'a str) -> Vec<Vec<&'a str>> {
         .collect()
 }
 
-pub fn parse_as<X, Y, Input, Output>(
-    input: &Y,
-) -> Result<Vec<Vec<Output>>, <Output as FromStr>::Err>
+pub fn parse_as<X, Y, Input, Output>(input: &Y) -> ParsedTokens<Output>
 where
     Y: AsRef<[X]>,
     X: AsRef<[Input]>,
@@ -44,7 +45,7 @@ where
         .collect()
 }
 
-pub fn file_as<Output>(filename: &str) -> Result<Vec<Vec<Output>>, <Output as FromStr>::Err>
+pub fn file_as<Output>(filename: &str) -> ParsedTokens<Output>
 where
     Output: FromStr,
 {
