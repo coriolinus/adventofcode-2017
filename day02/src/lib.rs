@@ -59,7 +59,7 @@ where
             }
         }
     }
-    panic!("No even divisors found")
+    T::zero()
 }
 
 pub fn divisible_checksum<X, Y, T>(sheet: &Y) -> T
