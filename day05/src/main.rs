@@ -2,10 +2,10 @@ extern crate day05;
 use day05::JumpMemory;
 
 extern crate util;
-use util::{file_as, reduce_dimension};
+use util::{file_as, flatten};
 
 fn main() {
-    let input = reduce_dimension(file_as::<isize>("input.txt").expect(
+    let input = flatten(file_as::<isize>("input.txt").expect(
         "Error reading input.txt",
     ));
     let mut jm = JumpMemory::new(&input);

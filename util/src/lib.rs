@@ -6,6 +6,9 @@ use std::mem;
 pub type Tokenized<T> = Vec<Vec<T>>;
 pub type ParsedTokens<T> = Result<Tokenized<T>, <T as FromStr>::Err>;
 
+/// Read a file to a string
+///
+/// Panic if anything goes wrong
 pub fn read_file(filename: &str) -> String {
     let mut f = File::open(filename).expect("file not found");
     let mut contents = String::new();
@@ -15,6 +18,12 @@ pub fn read_file(filename: &str) -> String {
     contents
 }
 
+/// Convert a string to a `Vec<Vec<&str>>`
+///
+/// The outer vector contains the lines of the string, split by newlines
+/// The inner vector contains the tokens of the string, split by whitespace
+///
+/// Empty lines and empty whitespace are discarded
 pub fn tokenize<'a>(input: &'a str) -> Tokenized<&'a str> {
     input
         .lines()
@@ -27,6 +36,7 @@ pub fn tokenize<'a>(input: &'a str) -> Tokenized<&'a str> {
         .collect()
 }
 
+/// Parse a `Vec<Vec<&str>>` -> `Result<Vec<Vec<Output>>, ParseError>`
 pub fn parse_as<X, Y, Input, Output>(input: &Y) -> ParsedTokens<Output>
 where
     Y: AsRef<[X]>,
@@ -46,6 +56,7 @@ where
         .collect()
 }
 
+/// Read the file whose path is given, tokenize it, and parse the tokens as the specified type
 pub fn file_as<Output>(filename: &str) -> ParsedTokens<Output>
 where
     Output: FromStr,
@@ -53,7 +64,12 @@ where
     parse_as(&tokenize(&read_file(filename)))
 }
 
-pub fn reduce_dimension<T: Default>(input: Tokenized<T>) -> Vec<T> {
+/// Convert a `Vec<Vec<T>>` -> `Vec<T>`
+///
+/// For each row of the outer vector, if the inner vector is not empty, takes the first item.
+///
+/// Useful if the input file is many lines with a single value per line
+pub fn flatten<T: Default>(input: Tokenized<T>) -> Vec<T> {
     input
         .into_iter()
         .filter(|sl| sl.len() > 0)
