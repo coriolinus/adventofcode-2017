@@ -1,0 +1,29 @@
+use std::str::FromStr;
+
+grammar;
+
+pub Node: (&'input str, usize, Vec<&'input str>) = {
+   <n:Name> "(" <w:Weight> ")" => (n, w, Vec::new()),
+   <n:Name> "(" <w:Weight> ")" "->" <l:NameList> => (n, w, l),
+};
+
+Name: &'input str = {
+   r"[[:alpha:]]\w*" => <>,
+};
+
+Weight: usize = {
+   r"\d+" => usize::from_str(<>).unwrap(),
+};
+
+NameList = CommaSeparatedList<Name>;
+
+CommaSeparatedList<T>: Vec<T> = { // (1)
+    <v:(<T> ",")*> <e:T?> => match e { // (2)
+        None => v,
+        Some(e) => {
+            let mut v = v;
+            v.push(e);
+            v
+        }
+    }
+};
