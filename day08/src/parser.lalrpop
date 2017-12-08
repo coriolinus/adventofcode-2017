@@ -1,0 +1,32 @@
+use std::str::FromStr;
+use super::*;
+
+grammar;
+
+pub instruction: Instruction<'input> = {
+   <register:Name> <operation:Operation> <qty:Value>
+   "if" <compare_register:Name> <comparison:Comparison> <compare_qty:Value> =>
+   Instruction::new(register, operation, qty, compare_register, comparison, compare_qty),
+};
+
+Name: &'input str = {
+   r"[[:alpha:]]\w*" => <>,
+};
+
+Operation: Operation = {
+   "inc" => Operation::Inc,
+   "dec" => Operation::Dec,
+};
+
+Value: Register = {
+   r"-?\d+" => Register::from_str(<>).unwrap(),
+};
+
+Comparison: Comparison = {
+   ">" => Comparison::Gt,
+   "<" => Comparison::Lt,
+   ">=" => Comparison::Gte,
+   "<=" => Comparison::Lte,
+   "==" => Comparison::Eq,
+   "!=" => Comparison::Ne,
+};
