@@ -1,15 +1,17 @@
 extern crate day08;
-use day08::parse_instruction;
+use day08::{execute, parse, max_value_in, execute_collecting_max};
 
 extern crate util;
 use util::read_file;
 
 fn main() {
     let input = read_file("input.txt");
-    for (line_no, line) in input.trim().lines().enumerate() {
-        if let Err(e) = parse_instruction(line) {
-            println!("Failed to parse line {} (\"{}\"):", line_no, line);
-            println!("  {:?}", e);
-        }
-    }
+    let program = parse(&input);
+    let registers = execute(&program);
+
+    println!("Max value in any register: {:?}", max_value_in(&registers));
+    println!(
+        "Max value ever to appear: {:?}",
+        execute_collecting_max(&program)
+    );
 }
