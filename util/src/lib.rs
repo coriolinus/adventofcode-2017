@@ -25,13 +25,29 @@ pub fn read_file(filename: &str) -> String {
 ///
 /// Empty lines and empty whitespace are discarded
 pub fn tokenize<'a>(input: &'a str) -> Tokenized<&'a str> {
+    tokenize_by(input, |line| {
+        line.split_whitespace()
+            .filter(|ref token| !token.is_empty())
+            .collect::<Vec<_>>()
+    })
+}
+
+/// Use a given tokenization function to convert a string to a `Vec<Vec<&str>>`
+///
+/// The outer vector contains the lines of the string, split by newlines
+/// The inner vector contains the tokens of the string, split by the supplied tokenization function
+///
+/// Empty lines are discarded
+pub fn tokenize_by<'a, LineTokenizer>(
+    input: &'a str,
+    line_tokenizer: LineTokenizer,
+) -> Tokenized<&'a str>
+where
+    LineTokenizer: Fn(&'a str) -> Vec<&'a str>,
+{
     input
         .lines()
-        .map(|line| {
-            line.split_whitespace()
-                .filter(|ref token| !token.is_empty())
-                .collect::<Vec<_>>()
-        })
+        .map(line_tokenizer)
         .filter(|ref line| !line.is_empty())
         .collect()
 }
@@ -62,6 +78,19 @@ where
     Output: FromStr,
 {
     parse_as(&tokenize(&read_file(filename)))
+}
+
+/// Read the file whose path is given, tokenize it by the given line tokenization function,
+/// and parse the tokens as the specified type
+pub fn file_as_by<Output, LineTokenizer>(
+    filename: &str,
+    line_tokenizer: LineTokenizer,
+) -> ParsedTokens<Output>
+where
+    LineTokenizer: Fn(&str) -> Vec<&str>,
+    Output: FromStr,
+{
+    parse_as(&tokenize_by(&read_file(filename), line_tokenizer))
 }
 
 /// Convert a `Vec<Vec<T>>` -> `Vec<T>`
