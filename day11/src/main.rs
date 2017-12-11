@@ -13,15 +13,13 @@ fn main() {
             .collect()
     }).expect("Problem parsing input")
     {
-        let position: HexPosition = directions.iter().sum();
-        println!("Dist to origin: {}", position.min_steps_to_origin());
-
         let mut position = HexPosition::new();
         let mut max_dist = 0;
         for direction in directions.iter() {
             position = position + direction;
             max_dist = max(max_dist, position.min_steps_to_origin());
         }
+        println!("Dist to origin: {}", position.min_steps_to_origin());
         println!("Max dist to origin: {}", max_dist);
     }
 }
