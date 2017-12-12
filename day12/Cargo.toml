@@ -1,0 +1,13 @@
+[package]
+name = "day12"
+version = "0.1.0"
+authors = ["Peter Goodspeed-Niklaus <peter.r.goodspeedniklaus@gmail.com>"]
+build = "build.rs" # LALRPOP preprocessing
+
+[dependencies]
+util = { path = "../util" }
+lalrpop-util = "0.13.1"
+regex = "0.2.0"
+
+[build-dependencies]
+lalrpop = "0.13.1"

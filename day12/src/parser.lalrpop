@@ -1,0 +1,24 @@
+use std::str::FromStr;
+
+grammar;
+
+pub connections: (usize, Vec<usize>) = {
+   <id:NodeId> "<->" <l:NodeIdList> => (id, l),
+};
+
+NodeId: usize = {
+   r"\d+" => usize::from_str(<>).unwrap(),
+};
+
+NodeIdList = CommaSeparatedList<NodeId>;
+
+CommaSeparatedList<T>: Vec<T> = { // (1)
+    <v:(<T> ",")*> <e:T?> => match e { // (2)
+        None => v,
+        Some(e) => {
+            let mut v = v;
+            v.push(e);
+            v
+        }
+    }
+};
