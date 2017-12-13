@@ -109,3 +109,15 @@ pub fn flatten<T: Default>(input: Tokenized<T>) -> Vec<T> {
         })
         .collect()
 }
+
+/// like `println!`, but only emits output in a debug run
+#[macro_export]
+macro_rules! debug_println {
+    ($($item:expr,)+) => {
+        debug_println!($($item),+);
+    };
+    ($($item:expr),+) => {
+        #[cfg(debug_assertions)]
+        println!($($item),+);
+    };
+}

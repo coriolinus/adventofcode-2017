@@ -1,6 +1,7 @@
 extern crate day13;
 use day13::Firewall;
 
+#[macro_use]
 extern crate util;
 use util::file_as_by;
 
@@ -17,17 +18,15 @@ fn main() {
         firewall.add_layer(rule[0], rule[1]);
     }
 
-    #[cfg(debug_assertions)]
-    println!("Determining severity of 0-delay start...");
+    debug_println!("Determining severity of 0-delay start...");
     println!(
         "Severity of starting without delay: {}",
         firewall.traversal_severity(0)
     );
-    #[cfg(debug_assertions)]
-    {
-        println!("");
-        println!("Finding undetected delay...");
-    }
+
+    debug_println!("");
+    debug_println!("Finding undetected delay...");
+
     println!(
         "First delay which sneaks through undetected: {}",
         firewall.find_first_uncaught_delay()

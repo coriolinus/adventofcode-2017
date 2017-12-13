@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 use std::cmp::max;
 
+#[macro_use]
+extern crate util;
+
 pub struct Firewall {
     layer_depths: HashMap<usize, usize>,
     max_layer: usize,
@@ -26,21 +29,17 @@ impl Firewall {
     fn __traversal_severity(&self, initial_delay: usize, short_circuit: bool) -> usize {
         let mut severity = 0;
         for (depth, time) in (initial_delay..(initial_delay + self.max_layer + 1)).enumerate() {
-            #[cfg(debug_assertions)]
-            println!("  Depth {}, time {}:", depth, time);
+            debug_println!("  Depth {}, time {}:", depth, time);
             if let Some(range) = self.layer_depths.get(&depth) {
-                #[cfg(debug_assertions)]
-                {
-                    println!("    Scanner found with range: {}", *range);
-                    println!("    Current position: {}", scanner_position(*range, time));
-                }
+                debug_println!("    Scanner found with range: {}", *range);
+                debug_println!("    Current position: {}", scanner_position(*range, time));
+
                 if scanner_position(*range, time) == 0 {
                     severity += depth * range;
-                    #[cfg(debug_assertions)]
-                    println!(
+                    debug_println!(
                         "      Caught! Severity += {} (== {}):",
                         depth * range,
-                        severity
+                        severity,
                     );
                     if short_circuit {
                         return severity + 1;
@@ -58,8 +57,7 @@ impl Firewall {
     /// usize, at which point it will panic.
     pub fn find_first_uncaught_delay(&self) -> usize {
         for delay in 0.. {
-            #[cfg(debug_assertions)]
-            println!("Testing a delay of {}:", delay);
+            debug_println!("Testing a delay of {}:", delay);
             if self.__traversal_severity(delay, true) == 0 {
                 return delay;
             }
