@@ -56,13 +56,13 @@ impl Firewall {
     /// Note that for unsafe inputs, this will run until it overflows
     /// usize, at which point it will panic.
     pub fn find_first_uncaught_delay(&self) -> usize {
-        for delay in 0.. {
+        for delay in 0..usize::max_value() {
             debug_println!("Testing a delay of {}:", delay);
             if self.__traversal_severity(delay, true) == 0 {
                 return delay;
             }
         }
-        unreachable!("We have to assume that we'll find a working delay eventually")
+        panic!("No solution found which fits in a usize")
     }
 }
 
