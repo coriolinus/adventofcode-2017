@@ -3,6 +3,8 @@ use std::io::prelude::*;
 use std::str::FromStr;
 use std::mem;
 
+pub mod modular_math;
+
 pub type Tokenized<T> = Vec<Vec<T>>;
 pub type ParsedTokens<T> = Result<Tokenized<T>, <T as FromStr>::Err>;
 
