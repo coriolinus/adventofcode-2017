@@ -1,6 +1,3 @@
-extern crate util;
-use util::modular_math::mul_mod;
-
 pub struct Generator {
     prev_value: u64,
     factor: u64,
@@ -10,7 +7,7 @@ pub struct Generator {
 impl Iterator for Generator {
     type Item = u64;
     fn next(&mut self) -> Option<u64> {
-        self.prev_value = mul_mod(self.prev_value, self.factor, self.quotrem);
+        self.prev_value = self.prev_value * self.factor % self.quotrem;
         Some(self.prev_value)
     }
 }

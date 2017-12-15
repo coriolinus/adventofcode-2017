@@ -4,4 +4,3 @@ version = "0.1.0"
 authors = ["Peter Goodspeed-Niklaus <peter.r.goodspeedniklaus@gmail.com>"]
 
 [dependencies]
-util = { path = "../util" }
