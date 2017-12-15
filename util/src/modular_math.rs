@@ -10,6 +10,7 @@
 /// Compute `(x.pow(y)) % m` without overflow or bigints
 ///
 /// https://en.wikipedia.org/wiki/Modular_arithmetic#Example_implementations
+#[inline]
 pub fn pow_mod(mut a: u64, mut b: u64, m: u64) -> u64 {
     let mut r = 1;
     while b > 0 {
@@ -25,6 +26,7 @@ pub fn pow_mod(mut a: u64, mut b: u64, m: u64) -> u64 {
 /// Compute `(x * y) % m` without overflow or bigints
 ///
 /// https://stackoverflow.com/a/45924957/504550
+#[inline]
 pub fn mul_mod(mut x: u64, mut y: u64, m: u64) -> u64 {
     let msb = 0x8000_0000_0000_0000;
     let mut d = 0;
