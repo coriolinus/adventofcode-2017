@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate util;
-
 use std::str::FromStr;
 use std::collections::VecDeque;
 
@@ -58,7 +55,6 @@ fn programs() -> VecDeque<char> {
     for idx in 0..(num_programs + 1) {
         programs.push_back((MIN_CHAR as u8 + idx) as char);
     }
-    debug_println!("Created initial programs: {:?}", programs);
     programs
 }
 
@@ -199,16 +195,16 @@ mod tests {
     /// The second assert_eq shows that dancing again, and translating again,
     /// produce different results.
     fn test_translation_table_fails() {
-        debug_println!("");
+        println!("");
         let instructions = {
             use Instruction::*;
             [Spin(1), Exchange(3, 4), Partner('e', 'b')]
         };
         let mut positions = programs();
         dance_with(&instructions, &mut positions);
-        debug_println!("after initial dance:   {:?}", positions);
+        println!("after initial dance:   {:?}", positions);
         let translation = generate_translation(positions.iter().cloned());
-        debug_println!("generated translation: {:?}", translation);
+        println!("generated translation: {:?}", translation);
 
         // test that applying the translation gets the same result as the original dance
         let mut positions2 = programs();
