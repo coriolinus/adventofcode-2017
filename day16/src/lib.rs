@@ -185,6 +185,31 @@ mod tests {
     use super::*;
 
     #[test]
+    /// Verify that we can produce a translation table and apply it correctly
+    ///
+    /// This is the same code ase the first portion of the next test, copy-pasted.
+    /// The goal is to prove that it is only the second assertion which fails.
+    fn test_translation_functsions_work() {
+        println!("");
+        let instructions = {
+            use Instruction::*;
+            [Spin(1), Exchange(3, 4), Partner('e', 'b')]
+        };
+        let mut positions = programs();
+        dance_with(&instructions, &mut positions);
+        println!("after initial dance:   {:?}", positions);
+        let translation = generate_translation(positions.iter().cloned());
+        println!("generated translation: {:?}", translation);
+
+        // test that applying the translation gets the same result as the original dance
+        let mut positions2 = programs();
+        let mut buffer = VecDeque::with_capacity(positions.len());
+
+        apply_translation(&mut positions2, &mut buffer, &translation);
+        assert_eq!(positions, positions2);
+    }
+
+    #[test]
     #[should_panic]
     /// prove that translation table approaches don't work
     ///
