@@ -1,5 +1,5 @@
 extern crate day18;
-use day18::Machine;
+use day18::Duet;
 use day18::parser::parse_instruction;
 
 extern crate util;
@@ -15,6 +15,6 @@ fn main() {
             parse_instruction(line).expect("problem parsing line")
         })
         .collect::<Vec<_>>();
-    let mut machine = Machine::new(&instructions);
-    println!("first sound recovered: {:?}", machine.run());
+    let mut duet = Duet::new(&instructions);
+    println!("Machine 1 send count: {}", duet.run());
 }
