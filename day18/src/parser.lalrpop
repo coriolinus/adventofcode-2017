@@ -1,0 +1,40 @@
+use std::str::FromStr;
+use super::{RegisterID, RegisterValue, Instruction, ValueHolder};
+
+grammar;
+
+Lines<T>: Vec<T> = { // (1)
+    <v:(<T> "\n")*> <e:T?> => match e { // (2)
+        None => v,
+        Some(e) => {
+            let mut v = v;
+            v.push(e);
+            v
+        }
+    }
+};
+
+pub instructions = Lines<instruction>;
+
+pub instruction: Instruction = {
+    "snd" <x:ValHldr> => Instruction::Snd(x),
+    "set" <x:RegId> <y:ValHldr> => Instruction::Set(x, y),
+    "add" <x:RegId> <y:ValHldr> => Instruction::Add(x, y),
+    "mul" <x:RegId> <y:ValHldr> => Instruction::Mul(x, y),
+    "mod" <x:RegId> <y:ValHldr> => Instruction::Mod(x, y),
+    "rcv" <x:RegId> => Instruction::Rcv(x),
+    "jgz" <x:ValHldr> <y:ValHldr> => Instruction::Jgz(x, y),
+};
+
+ValHldr: ValueHolder = {
+    RegId => ValueHolder::Register(<>),
+    RegVal => ValueHolder::Number(<>),
+};
+
+RegId: RegisterID = {
+   r"[a-z]" => <>.chars().next().unwrap(),
+};
+
+RegVal: RegisterValue = {
+   r"-?\d+" => RegisterValue::from_str(<>).unwrap(),
+};
