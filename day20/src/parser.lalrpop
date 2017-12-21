@@ -1,0 +1,17 @@
+use super::{Vector3, Particle};
+
+grammar;
+
+
+pub particle: Particle = {
+    "p=" <position:Vector> "," "v=" <velocity:Vector> "," "a=" <acceleration:Vector> =>
+        Particle::new(position, velocity, acceleration),
+};
+
+Vector: Vector3 = {
+   "<" <x:Integer> "," <y:Integer> "," <z:Integer> ">" => Vector3::new(x, y, z),
+};
+
+Integer: i64 = {
+   r"-?\d+" => i64::from_str_radix(<>, 10).unwrap(),
+};
