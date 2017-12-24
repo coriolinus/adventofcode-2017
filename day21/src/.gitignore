@@ -1,0 +1,6 @@
+# parser.rs is generated at compile time by parser.lalrpop,
+# so is not necessary.
+# Ideally, we could express the rule "<n:*>.rs iff <n>.lalrpop",
+# but if that's possible in a standard .gitignore file,
+# I don't know how to do it.
+parser.rs

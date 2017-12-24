@@ -1,0 +1,16 @@
+use super::{Pixel, Image, Rule};
+
+grammar;
+
+pub Pixel: Pixel = {
+   "." => false,
+   "#" => true,
+};
+
+Image: Image = {
+   <p1:Pixel> <p2:Pixel> "/" <p3:Pixel> <p4:Pixel> => vec![vec![p1, p2], vec![p3, p4]],
+   <p1:Pixel> <p2:Pixel> <p3:Pixel> "/" <p4:Pixel> <p5:Pixel> <p6:Pixel> "/" <p7:Pixel> <p8:Pixel> <p9:Pixel> => vec![vec![p1, p2, p3], vec![p4, p5, p6], vec![p7, p8, p9]],
+   <p1:Pixel> <p2:Pixel> <p3:Pixel> <p4:Pixel> "/" <p5:Pixel> <p6:Pixel> <p7:Pixel> <p8:Pixel> "/" <p9:Pixel> <p10:Pixel> <p11:Pixel> <p12:Pixel> "/" <p13:Pixel> <p14:Pixel> <p15:Pixel> <p16:Pixel> => vec![vec![p1, p2, p3, p4], vec![p5, p6, p7, p8], vec![p9, p10, p11, p12], vec![p13, p14, p15, p16]],
+};
+
+pub rule: Rule = <s:Image> "=>" <d:Image> => (s, d);
