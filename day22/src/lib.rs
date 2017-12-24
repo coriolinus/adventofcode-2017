@@ -3,7 +3,7 @@ use std::fmt;
 #[macro_use]
 extern crate util;
 
-pub type Map = Vec<Vec<bool>>;
+pub type Map = Vec<Vec<NodeState>>;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
@@ -39,9 +39,39 @@ impl Direction {
             Right => Up,
         }
     }
+
+    pub fn reverse(&self) -> Direction {
+        use Direction::*;
+        match *self {
+            Up => Down,
+            Down => Up,
+            Left => Right,
+            Right => Left,
+        }
+    }
 }
 
-pub const MAP_FACTOR: usize = 100;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NodeState {
+    Clean,
+    Weakened,
+    Infected,
+    Flagged,
+}
+
+impl NodeState {
+    pub fn touch(&self) -> NodeState {
+        use NodeState::*;
+        match *self {
+            Clean => Weakened,
+            Weakened => Infected,
+            Infected => Flagged,
+            Flagged => Clean,
+        }
+    }
+}
+
+pub const MAP_FACTOR: usize = 500;
 
 pub fn generate_map(input: &str) -> Map {
     let lines = input.lines()
@@ -50,8 +80,8 @@ pub fn generate_map(input: &str) -> Map {
         .map(|line| {
             line.chars()
                 .map(|c| match c {
-                    '.' => false,
-                    '#' => true,
+                    '.' => NodeState::Clean,
+                    '#' => NodeState::Infected,
                     _ => panic!("unexpected char in input"),
                 })
                 .collect::<Vec<_>>()
@@ -64,10 +94,10 @@ pub fn generate_map(input: &str) -> Map {
     let nr_prefix_rows = (map_size - nr_rows) / 2;
 
     for _ in 0..nr_prefix_rows {
-        out.push(vec![false; map_size]);
+        out.push(vec![NodeState::Clean; map_size]);
     }
     for row_idx in 0..nr_rows {
-        let mut row = vec![false; map_size];
+        let mut row = vec![NodeState::Clean; map_size];
         // assume a square input
         for col_idx in 0..nr_rows {
             row[col_idx + nr_prefix_rows] = lines[row_idx][col_idx];
@@ -75,7 +105,7 @@ pub fn generate_map(input: &str) -> Map {
         out.push(row);
     }
     for _ in 0..nr_prefix_rows {
-        out.push(vec![false; map_size]);
+        out.push(vec![NodeState::Clean; map_size]);
     }
 
     out
@@ -99,18 +129,22 @@ impl<'a> Sporifica<'a> {
         }
     }
 
-    fn current(&mut self) -> &mut bool {
+    fn current(&mut self) -> &mut NodeState {
         &mut self.map[self.row][self.col]
     }
 
     pub fn burst(&mut self) -> bool {
-        self.facing = if *self.current() {
-            self.facing.right()
-        } else {
-            self.facing.left()
-        };
-        *self.current() = !*self.current();
-        let activated = *self.current();
+        {
+            use NodeState::*;
+            self.facing = match *self.current() {
+                Clean => self.facing.left(),
+                Weakened => self.facing,
+                Infected => self.facing.right(),
+                Flagged => self.facing.reverse(),
+            };
+        }
+        *self.current() = self.current().touch();
+        let activated = *self.current() == NodeState::Infected;
         {
             use Direction::*;
             match self.facing {
@@ -148,10 +182,14 @@ impl<'a> fmt::Display for Sporifica<'a> {
                 } else {
                     write!(f, " ")?;
                 }
-                if self.map[row][col] {
-                    write!(f, "#")?;
-                } else {
-                    write!(f, ".")?;
+                {
+                    use NodeState::*;
+                    match self.map[row][col] {
+                        Clean => write!(f, ".")?,
+                        Weakened => write!(f, "W")?,
+                        Infected => write!(f, "#")?,
+                        Flagged => write!(f, "F")?,
+                    }
                 }
                 if row == self.row && col == self.col {
                     write!(f, "]")?;

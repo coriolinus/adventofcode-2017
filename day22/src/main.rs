@@ -9,5 +9,6 @@ fn main() {
     let mut map = generate_map(&input);
 
     let mut virus = Sporifica::new(&mut map);
-    println!("activating in 10_000: {}", virus.burst_n(10_000));
+    let bursts = 10_000_000;
+    println!("activating in {}: {}", bursts, virus.burst_n(bursts));
 }
